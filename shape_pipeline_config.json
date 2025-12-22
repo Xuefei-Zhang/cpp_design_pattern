@@ -1,0 +1,70 @@
+{
+  "name": "Shape Processing Pipeline",
+  "stages": [
+    {
+      "name": "Generation",
+      "workers": 2,
+      "tasks": [
+        {
+          "id": "generate_circle_1",
+          "type": "GenerateShape",
+          "shapeType": "circle",
+          "param1": 2.0,
+          "posX": 0.0,
+          "posY": 0.0
+        },
+        {
+          "id": "generate_rect_1",
+          "type": "GenerateShape",
+          "shapeType": "rectangle",
+          "param1": 3.0,
+          "param2": 4.0,
+          "posX": 10.0,
+          "posY": 10.0
+        }
+      ]
+    },
+    {
+      "name": "Validation",
+      "workers": 2,
+      "tasks": [
+        {
+          "id": "validate_circle_1",
+          "type": "ValidateShape"
+        },
+        {
+          "id": "validate_rect_1", 
+          "type": "ValidateShape"
+        }
+      ]
+    },
+    {
+      "name": "Transformation",
+      "workers": 1,
+      "tasks": [
+        {
+          "id": "transform_circle_1",
+          "type": "TransformShape",
+          "scaleX": 2.0,
+          "scaleY": 2.0
+        }
+      ]
+    },
+    {
+      "name": "Rendering",
+      "workers": 1,
+      "tasks": [
+        {
+          "id": "render_circle_1",
+          "type": "RenderShape"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    ["validate_circle_1", "generate_circle_1"],
+    ["validate_rect_1", "generate_rect_1"],
+    ["transform_circle_1", "validate_circle_1"],
+    ["render_circle_1", "transform_circle_1"]
+  ]
+}
