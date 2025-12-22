@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <queue>
@@ -119,6 +120,83 @@ public:
         return 0.5 * base * height * scale * scale;
     }
 };
+
+// Trace Logger for Chrome Tracing format
+class TraceLogger {
+private:
+    std::ofstream traceFile;
+    std::chrono::steady_clock::time_point startTime;
+    mutable std::mutex logMutex;
+
+public:
+    TraceLogger(const std::string& filename = "pipeline_trace.json")
+        : traceFile(filename), startTime(std::chrono::steady_clock::now()) {
+        traceFile << "{\"traceEvents\": [" << std::endl;
+    }
+
+    void logEvent(const std::string& name, const std::string& cat,
+                  const std::string& ph, const std::string& pid,
+                  const std::string& tid, uint64_t ts,
+                  const std::map<std::string, std::string>& args = {}) {
+        std::lock_guard<std::mutex> lock(logMutex);
+        traceFile << "{"
+                  << "\"name\":\"" << name << "\","
+                  << "\"cat\":\"" << cat << "\","
+                  << "\"ph\":\"" << ph << "\","
+                  << "\"pid\":\"" << pid << "\","
+                  << "\"tid\":\"" << tid << "\","
+                  << "\"ts\":" << ts;
+
+        if (!args.empty()) {
+            traceFile << ",\"args\":{";
+            bool first = true;
+            for (const auto& arg : args) {
+                if (!first) traceFile << ",";
+                traceFile << "\"" << arg.first << "\":\"" << arg.second << "\"";
+                first = false;
+            }
+            traceFile << "}";
+        }
+
+        traceFile << "},";
+    }
+
+    void logTaskBegin(const std::string& taskName, const std::string& stageName,
+                      const std::string& taskId, const std::string& workerId) {
+        auto now = std::chrono::steady_clock::now();
+        uint64_t ts = std::chrono::duration_cast<std::chrono::microseconds>(
+            now - startTime).count();
+        std::map<std::string, std::string> args = {{"stage", stageName}, {"taskId", taskId}};
+        logEvent(taskName, "execution", "B", "PipelineSystem", workerId, ts, args);
+    }
+
+    void logTaskEnd(const std::string& taskName, const std::string& stageName,
+                    const std::string& taskId, const std::string& workerId) {
+        auto now = std::chrono::steady_clock::now();
+        uint64_t ts = std::chrono::duration_cast<std::chrono::microseconds>(
+            now - startTime).count();
+        std::map<std::string, std::string> args = {{"stage", stageName}, {"taskId", taskId}};
+        logEvent(taskName, "execution", "E", "PipelineSystem", workerId, ts, args);
+    }
+
+    ~TraceLogger() {
+        finalize();
+    }
+
+    void finalize() {
+        if (traceFile.is_open()) {
+            traceFile.seekp(-1, std::ios_base::end); // Remove the last comma
+            if (traceFile.tellp() > 0) {  // Make sure we have content to modify
+                traceFile << "\n],\"displayTimeUnit\":\"ms\"}" << std::endl;
+            } else {
+                traceFile << "],\"displayTimeUnit\":\"ms\"}" << std::endl;
+            }
+            traceFile.close();
+        }
+    }
+};
+
+static TraceLogger traceLogger;
 
 // Factory class for creating shapes
 class ShapeFactory {
@@ -266,29 +344,37 @@ public:
     void workerFunction(size_t workerId) {
         while (!shouldStop) {
             std::unique_ptr<Task> task = inputQueue->waitAndPop();
-            
+
             if (task) {
-                std::cout << "Stage '" << stageName << "' Worker " << workerId 
-                         << " processing task: " << task->getName() 
+                std::string workerStr = stageName + "_Worker_" + std::to_string(workerId);
+
+                std::cout << "Stage '" << stageName << "' Worker " << workerId
+                         << " processing task: " << task->getName()
                          << " [ID: " << task->taskId << "]" << std::endl;
-                
+
+                // Log the start of the task
+                traceLogger.logTaskBegin(task->getName(), stageName, task->taskId, workerStr);
+
                 // Execute the task
                 auto startTime = std::chrono::steady_clock::now();
                 task->execute();
                 auto endTime = std::chrono::steady_clock::now();
-                
+
                 auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
-                std::cout << "Stage '" << stageName << "' Worker " << workerId 
-                         << " completed task: " << task->getName() 
+                std::cout << "Stage '" << stageName << "' Worker " << workerId
+                         << " completed task: " << task->getName()
                          << " in " << duration.count() << "ms" << std::endl;
-                
+
+                // Log the end of the task
+                traceLogger.logTaskEnd(task->getName(), stageName, task->taskId, workerStr);
+
                 // Pass to next stage if there is one and if the task should continue
                 if (outputQueue && shouldPassToNextStage(task.get())) {
                     if (!outputQueue->push(std::move(task))) {
                         std::cout << "Warning: Output queue for stage '" << stageName << "' is full!" << std::endl;
                     }
                 }
-                
+
                 // Call the completion callback if set
                 if (onTaskCompleted) {
                     onTaskCompleted();
@@ -575,13 +661,13 @@ public:
 
 int main() {
     std::cout << "Pipeline + Task System with Shapes Example\n" << std::endl;
-    
+
     // Create the pipeline
     ShapeProcessingPipeline pipeline;
-    
+
     // Submit multiple shape generation tasks to start the pipeline
     std::cout << "Submitting tasks to pipeline...\n" << std::endl;
-    
+
     // Generate various shapes with different properties
     for (int i = 0; i < 8; ++i) {
         ShapeFactory::ShapeType type = static_cast<ShapeFactory::ShapeType>(i % 3);
@@ -589,29 +675,32 @@ int main() {
         double p2 = 1.0 + (i * 0.3);
         double x = i * 10.0;
         double y = i * 5.0;
-        
+
         pipeline.submitShapeGenerationTask(type, p1, p2, x, y);
-        
+
         // Small delay between submissions to simulate realistic usage
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-    
+
     std::cout << "\nAll tasks submitted. Pipeline is processing...\n" << std::endl;
-    
+
     // Print periodic status updates
     for (int i = 0; i < 10; ++i) {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         pipeline.printStatus();
     }
-    
+
     // Wait for all tasks to complete
     std::cout << "Waiting for pipeline to finish processing..." << std::endl;
     pipeline.waitForCompletion();
-    
+
     std::cout << "\nFinal Status:" << std::endl;
     pipeline.printStatus();
-    
+
     std::cout << "\nPipeline + Task System demonstration completed!" << std::endl;
-    
+
+    // Explicitly finalize the trace logger to ensure proper file format
+    traceLogger.finalize();
+
     return 0;
 }
