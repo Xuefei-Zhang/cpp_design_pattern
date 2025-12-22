@@ -348,12 +348,15 @@ public:
             if (task) {
                 std::string workerStr = stageName + "_Worker_" + std::to_string(workerId);
 
+                // Use a more descriptive name that includes the stage for tracing purposes
+                std::string traceTaskName = stageName + "_" + task->getName();
+
                 std::cout << "Stage '" << stageName << "' Worker " << workerId
                          << " processing task: " << task->getName()
                          << " [ID: " << task->taskId << "]" << std::endl;
 
                 // Log the start of the task
-                traceLogger.logTaskBegin(task->getName(), stageName, task->taskId, workerStr);
+                traceLogger.logTaskBegin(traceTaskName, stageName, task->taskId, workerStr);
 
                 // Execute the task
                 auto startTime = std::chrono::steady_clock::now();
@@ -366,7 +369,7 @@ public:
                          << " in " << duration.count() << "ms" << std::endl;
 
                 // Log the end of the task
-                traceLogger.logTaskEnd(task->getName(), stageName, task->taskId, workerStr);
+                traceLogger.logTaskEnd(traceTaskName, stageName, task->taskId, workerStr);
 
                 // Pass to next stage if there is one and if the task should continue
                 if (outputQueue && shouldPassToNextStage(task.get())) {
