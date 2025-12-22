@@ -1,0 +1,194 @@
+Pipeline + Task System with Shapes Example
+
+Submitting tasks to pipeline...
+
+Stage 'Generation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_1]
+Generated shape: Circle [ID: SHAPE_TASK_1] with area: 3.14159
+Stage 'Generation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Validation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_1]
+Generated shape: Circle [ID: SHAPE_TASK_1] with area: 3.14159
+Stage 'Validation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Transformation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_1]
+Generated shape: Circle [ID: SHAPE_TASK_1] with area: 3.14159
+Stage 'Transformation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Rendering' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_1]
+Generated shape: Circle [ID: SHAPE_TASK_1] with area: 3.14159
+Stage 'Rendering' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Generation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_2]
+Generated shape: Rectangle [ID: SHAPE_TASK_2] with area: 1.95
+Stage 'Generation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Validation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_2]
+Generated shape: Rectangle [ID: SHAPE_TASK_2] with area: 1.95
+Stage 'Validation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Transformation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_2]
+Generated shape: Rectangle [ID: SHAPE_TASK_2] with area: 1.95
+Stage 'Transformation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Rendering' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_2]
+Generated shape: Rectangle [ID: SHAPE_TASK_2] with area: 1.95
+Stage 'Rendering' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Generation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_3]
+Generated shape: Triangle [ID: SHAPE_TASK_3] with area: 1.6
+Stage 'Generation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Validation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_3]
+Generated shape: Triangle [ID: SHAPE_TASK_3] with area: 1.6
+Stage 'Validation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Transformation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_3]
+Generated shape: Triangle [ID: SHAPE_TASK_3] with area: 1.6
+Stage 'Transformation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Rendering' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_3]
+Generated shape: Triangle [ID: SHAPE_TASK_3] with area: 1.6
+Stage 'Rendering' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Generation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_4]
+Generated shape: Circle [ID: SHAPE_TASK_4] with area: 19.6349
+Stage 'Generation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Validation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_4]
+Generated shape: Circle [ID: SHAPE_TASK_4] with area: 19.6349
+Stage 'Validation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Transformation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_4]
+Generated shape: Circle [ID: SHAPE_TASK_4] with area: 19.6349
+Stage 'Transformation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Rendering' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_4]
+Generated shape: Circle [ID: SHAPE_TASK_4] with area: 19.6349
+Stage 'Rendering' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Generation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_5]
+Generated shape: Rectangle [ID: SHAPE_TASK_5] with area: 6.6
+Stage 'Generation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Validation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_5]
+Generated shape: Rectangle [ID: SHAPE_TASK_5] with area: 6.6
+Stage 'Validation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Transformation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_5]
+Generated shape: Rectangle [ID: SHAPE_TASK_5] with area: 6.6
+Stage 'Transformation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Rendering' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_5]
+Generated shape: Rectangle [ID: SHAPE_TASK_5] with area: 6.6
+Stage 'Rendering' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Generation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_6]
+Generated shape: Triangle [ID: SHAPE_TASK_6] with area: 4.375
+Stage 'Generation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Validation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_6]
+Generated shape: Triangle [ID: SHAPE_TASK_6] with area: 4.375
+Stage 'Validation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Transformation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_6]
+Generated shape: Triangle [ID: SHAPE_TASK_6] with area: 4.375
+Stage 'Transformation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Rendering' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_6]
+Generated shape: Triangle [ID: SHAPE_TASK_6] with area: 4.375
+Stage 'Rendering' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Generation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_7]
+Generated shape: Circle [ID: SHAPE_TASK_7] with area: 50.2654
+Stage 'Generation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Validation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_7]
+Generated shape: Circle [ID: SHAPE_TASK_7] with area: 50.2654
+Stage 'Validation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Transformation' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_7]
+Generated shape: Circle [ID: SHAPE_TASK_7] with area: 50.2654
+Stage 'Transformation' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Rendering' Worker 0 processing task: GenerateShapeTask [ID: SHAPE_TASK_7]
+Generated shape: Circle [ID: SHAPE_TASK_7] with area: 50.2654
+Stage 'Rendering' Worker 0 completed task: GenerateShapeTask in 0ms
+Stage 'Generation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_8]
+Generated shape: Rectangle [ID: SHAPE_TASK_8] with area: 13.95
+Stage 'Generation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Validation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_8]
+Generated shape: Rectangle [ID: SHAPE_TASK_8] with area: 13.95
+Stage 'Validation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Transformation' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_8]
+Generated shape: Rectangle [ID: SHAPE_TASK_8] with area: 13.95
+Stage 'Transformation' Worker 1 completed task: GenerateShapeTask in 0ms
+Stage 'Rendering' Worker 1 processing task: GenerateShapeTask [ID: SHAPE_TASK_8]
+Generated shape: Rectangle [ID: SHAPE_TASK_8] with area: 13.95
+Stage 'Rendering' Worker 1 completed task: GenerateShapeTask in 0ms
+
+All tasks submitted. Pipeline is processing...
+
+
+--- Pipeline Status ---
+Stage 'Generation': Input Queue Size: 0, Workers: 2
+Stage 'Validation': Input Queue Size: 0, Workers: 2
+Stage 'Transformation': Input Queue Size: 0, Workers: 2
+Stage 'Rendering': Input Queue Size: 0, Workers: 2
+Total Completed Tasks: 32
+  generated: 8
+  rendered: 8
+  transformed: 8
+  validated: 8
+--- End Status ---
+
+
+--- Pipeline Status ---
+Stage 'Generation': Input Queue Size: 0, Workers: 2
+Stage 'Validation': Input Queue Size: 0, Workers: 2
+Stage 'Transformation': Input Queue Size: 0, Workers: 2
+Stage 'Rendering': Input Queue Size: 0, Workers: 2
+Total Completed Tasks: 32
+  generated: 8
+  rendered: 8
+  transformed: 8
+  validated: 8
+--- End Status ---
+
+
+--- Pipeline Status ---
+Stage 'Generation': Input Queue Size: 0, Workers: 2
+Stage 'Validation': Input Queue Size: 0, Workers: 2
+Stage 'Transformation': Input Queue Size: 0, Workers: 2
+Stage 'Rendering': Input Queue Size: 0, Workers: 2
+Total Completed Tasks: 32
+  generated: 8
+  rendered: 8
+  transformed: 8
+  validated: 8
+--- End Status ---
+
+
+--- Pipeline Status ---
+Stage 'Generation': Input Queue Size: 0, Workers: 2
+Stage 'Validation': Input Queue Size: 0, Workers: 2
+Stage 'Transformation': Input Queue Size: 0, Workers: 2
+Stage 'Rendering': Input Queue Size: 0, Workers: 2
+Total Completed Tasks: 32
+  generated: 8
+  rendered: 8
+  transformed: 8
+  validated: 8
+--- End Status ---
+
+
+--- Pipeline Status ---
+Stage 'Generation': Input Queue Size: 0, Workers: 2
+Stage 'Validation': Input Queue Size: 0, Workers: 2
+Stage 'Transformation': Input Queue Size: 0, Workers: 2
+Stage 'Rendering': Input Queue Size: 0, Workers: 2
+Total Completed Tasks: 32
+  generated: 8
+  rendered: 8
+  transformed: 8
+  validated: 8
+--- End Status ---
+
+
+--- Pipeline Status ---
+Stage 'Generation': Input Queue Size: 0, Workers: 2
+Stage 'Validation': Input Queue Size: 0, Workers: 2
+Stage 'Transformation': Input Queue Size: 0, Workers: 2
+Stage 'Rendering': Input Queue Size: 0, Workers: 2
+Total Completed Tasks: 32
+  generated: 8
+  rendered: 8
+  transformed: 8
+  validated: 8
+--- End Status ---
+
+
+--- Pipeline Status ---
+Stage 'Generation': Input Queue Size: 0, Workers: 2
+Stage 'Validation': Input Queue Size: 0, Workers: 2
+Stage 'Transformation': Input Queue Size: 0, Workers: 2
+Stage 'Rendering': Input Queue Size: 0, Workers: 2
+Total Completed Tasks: 32
+  generated: 8
+  rendered: 8
+  transformed: 8
+  validated: 8
+--- End Status ---
+
