@@ -6,6 +6,7 @@
 #include <mutex>
 #include <atomic>
 #include <memory>
+#include <stdexcept>
 #include <unordered_set>
 
 /**
@@ -73,7 +74,7 @@ private:
 
     // Members
     std::unique_ptr<Block[]> memoryPool_;
-    std::atomic<Block*> freeList_{nullptr};  // Using atomic for thread-safe head updates
+    Block* freeList_{nullptr};
     size_t numBlocks_;
     
     // Statistics
@@ -82,6 +83,10 @@ private:
     
     // Mutex for bulk operations and reset
     mutable std::mutex bulkMutex_;
+
+    void* allocateUnlocked();
+    void deallocateUnlocked(Block* block);
+    size_t getFreeBlockCountUnlocked() const;
     
     // Count number of blocks in free list (thread-safe iteration)
     size_t getFreeBlockCount() const;
@@ -112,43 +117,16 @@ EnhancedMemoryPool<BlockSize>::~EnhancedMemoryPool() {
 
 template<size_t BlockSize>
 void* EnhancedMemoryPool<BlockSize>::allocate() {
-    Block* oldHead;
-    Block* newHead;
-    
-    // Atomic compare-and-swap to pop from free list
-    do {
-        oldHead = freeList_.load();
-        if (oldHead == nullptr) {
-            // Pool is empty
-            return nullptr;
-        }
-        newHead = oldHead->next_;
-    } while (!freeList_.compare_exchange_weak(oldHead, newHead));
-    
-    // Successfully acquired a block
-    allocCount_.fetch_add(1);
-    
-    // Clear the next pointer to ensure clean state
-    oldHead->next_ = nullptr;
-    
-    return oldHead->getDataPtr();
+    std::lock_guard<std::mutex> lock(bulkMutex_);
+    return allocateUnlocked();
 }
 
 template<size_t BlockSize>
 void EnhancedMemoryPool<BlockSize>::deallocate(void* ptr) {
     if (!ptr) return; // Nothing to deallocate
-    
-    Block* block = Block::fromDataPtr(ptr);
-    
-    // Atomic compare-and-swap to push to free list
-    Block* oldHead;
-    do {
-        oldHead = freeList_.load();
-        block->next_ = oldHead;
-    } while (!freeList_.compare_exchange_weak(oldHead, block));
-    
-    // Successfully returned block to pool
-    deallocCount_.fetch_add(1);
+
+    std::lock_guard<std::mutex> lock(bulkMutex_);
+    deallocateUnlocked(Block::fromDataPtr(ptr));
 }
 
 template<size_t BlockSize>
@@ -159,21 +137,17 @@ std::vector<void*> EnhancedMemoryPool<BlockSize>::bulkAllocate(size_t count) {
     std::lock_guard<std::mutex> lock(bulkMutex_);
     
     for (size_t i = 0; i < count; ++i) {
-        void* ptr = allocate();
+        void* ptr = allocateUnlocked();
         if (ptr) {
             result.push_back(ptr);
         } else {
             // If we can't allocate all requested blocks,
             // deallocate the ones we did allocate
             for (void* allocatedPtr : result) {
-                // Manually return these to the free list
-                Block* block = Block::fromDataPtr(allocatedPtr);
-                Block* oldHead;
-                do {
-                    oldHead = freeList_.load();
-                    block->next_ = oldHead;
-                } while (!freeList_.compare_exchange_weak(oldHead, block));
+                deallocateUnlocked(Block::fromDataPtr(allocatedPtr));
             }
+            allocCount_.fetch_sub(result.size());
+            deallocCount_.fetch_sub(result.size());
             result.clear();
             break;
         }
@@ -187,35 +161,16 @@ void EnhancedMemoryPool<BlockSize>::bulkDeallocate(const std::vector<void*>& ptr
     if (ptrs.empty()) return;
     
     std::lock_guard<std::mutex> lock(bulkMutex_);
-    
-    // Link all the blocks to be deallocated together
-    for (size_t i = 0; i < ptrs.size(); ++i) {
-        Block* currentBlock = Block::fromDataPtr(ptrs[i]);
-        Block* nextBlock = (i + 1 < ptrs.size()) ? Block::fromDataPtr(ptrs[i + 1]) : freeList_.load();
-        currentBlock->next_ = nextBlock;
+
+    for (void* ptr : ptrs) {
+        deallocateUnlocked(Block::fromDataPtr(ptr));
     }
-    
-    // Atomically link the chain to the front of the free list
-    Block* firstBlock = Block::fromDataPtr(ptrs[0]);
-    Block* oldHead;
-    do {
-        oldHead = freeList_.load();
-        Block* lastBlock = Block::fromDataPtr(ptrs[ptrs.size() - 1]);
-        lastBlock->next_ = oldHead;
-    } while (!freeList_.compare_exchange_weak(oldHead, firstBlock));
-    
-    deallocCount_.fetch_add(ptrs.size());
 }
 
 template<size_t BlockSize>
 size_t EnhancedMemoryPool<BlockSize>::getFreeBlockCount() const {
-    size_t count = 0;
-    Block* current = freeList_.load();
-    while (current) {
-        ++count;
-        current = current->next_;
-    }
-    return count;
+    std::lock_guard<std::mutex> lock(bulkMutex_);
+    return getFreeBlockCountUnlocked();
 }
 
 template<size_t BlockSize>
@@ -223,7 +178,7 @@ void EnhancedMemoryPool<BlockSize>::reset() {
     std::lock_guard<std::mutex> lock(bulkMutex_);
     
     // Check if all blocks are currently free
-    if (getUsedBlocks() != 0) {
+    if (getFreeBlockCountUnlocked() != numBlocks_) {
         throw std::runtime_error("Cannot reset memory pool: some blocks are still in use");
     }
     
@@ -240,9 +195,11 @@ void EnhancedMemoryPool<BlockSize>::reset() {
 
 template<size_t BlockSize>
 bool EnhancedMemoryPool<BlockSize>::validateIntegrity() const {
+    std::lock_guard<std::mutex> lock(bulkMutex_);
+
     // Simple validation to detect cycles and invalid pointers
     std::unordered_set<const Block*> seen;
-    const Block* current = freeList_.load();
+    const Block* current = freeList_;
     size_t count = 0;
     
     while (current) {
@@ -269,6 +226,41 @@ bool EnhancedMemoryPool<BlockSize>::validateIntegrity() const {
     }
     
     return true;
+}
+
+template<size_t BlockSize>
+void* EnhancedMemoryPool<BlockSize>::allocateUnlocked() {
+    if (freeList_ == nullptr) {
+        return nullptr;
+    }
+
+    Block* oldHead = freeList_;
+    freeList_ = oldHead->next_;
+    oldHead->next_ = nullptr;
+    allocCount_.fetch_add(1);
+    return oldHead->getDataPtr();
+}
+
+template<size_t BlockSize>
+void EnhancedMemoryPool<BlockSize>::deallocateUnlocked(Block* block) {
+    if (!block) {
+        return;
+    }
+
+    block->next_ = freeList_;
+    freeList_ = block;
+    deallocCount_.fetch_add(1);
+}
+
+template<size_t BlockSize>
+size_t EnhancedMemoryPool<BlockSize>::getFreeBlockCountUnlocked() const {
+    size_t count = 0;
+    Block* current = freeList_;
+    while (current) {
+        ++count;
+        current = current->next_;
+    }
+    return count;
 }
 
 #endif // ENHANCED_MEMORY_POOL_H
