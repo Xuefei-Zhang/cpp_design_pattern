@@ -1,0 +1,65 @@
+name: pattern-tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-run-pattern-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test:
+          - test_abstract_factory.cpp
+          - test_factory_method.cpp
+          - test_builder_pattern.cpp
+          - test_prototype_pattern.cpp
+          - test_singleton_pattern.cpp
+          - test_friend_classes.cpp
+          - test_scene_builder.cpp
+
+          - test_adapter_pattern.cpp
+          - test_bridge_pattern.cpp
+          - test_composite_pattern.cpp
+          - test_decorator_pattern.cpp
+          - test_facade_pattern.cpp
+          - test_proxy_pattern_corrected.cpp
+
+          - test_chain_of_responsibility_final.cpp
+          - test_command_pattern_final.cpp
+          - test_flyweight_pattern_final.cpp
+          - test_observer_pattern.cpp
+          - test_strategy_pattern.cpp
+          - test_state_pattern.cpp
+
+          - test_thread_pool.cpp
+          - test_enhanced_thread_pool.cpp
+          - test_memory_pool.cpp
+          - test_enhanced_memory_pool.cpp
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show compiler
+        run: g++ --version
+
+      - name: Build and run ${{ matrix.test }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          src="${{ matrix.test }}"
+          if [[ ! -f "${src}" ]]; then
+            echo "Expected canonical test file missing: ${src}"
+            exit 1
+          fi
+
+          mkdir -p build/tests
+          bin="build/tests/${src%.cpp}"
+
+          echo "Compiling ${src} -> ${bin}"
+          g++ -std=c++14 -pthread -Wall -Wextra -pedantic "${src}" -o "${bin}"
+
+          echo "Running ${bin}"
+          "./${bin}"
