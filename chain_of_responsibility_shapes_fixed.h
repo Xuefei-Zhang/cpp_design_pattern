@@ -348,9 +348,8 @@ public:
             return nullptr;
         }
         
-        // Connect all handlers in sequence
-        for (size_t i = 0; i < handlers_.size() - 1; ++i) {
-            handlers_[i]->setSuccessor(std::move(handlers_[i + 1]));
+        for (size_t i = handlers_.size(); i > 1; --i) {
+            handlers_[i - 2]->setSuccessor(std::move(handlers_[i - 1]));
         }
         
         // Return the first handler in the chain
