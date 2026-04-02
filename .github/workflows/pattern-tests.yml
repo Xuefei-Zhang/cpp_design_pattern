@@ -66,22 +66,54 @@ jobs:
         run: |
           set -euo pipefail
 
-          src="${{ matrix.test }}"
+          testfile="${{ matrix.test }}"
+
+          # Determine category and find the test file
+          if [[ "$testfile" == test_abstract_factory.cpp ]] || \
+             [[ "$testfile" == test_factory_method.cpp ]] || \
+             [[ "$testfile" == test_builder_pattern.cpp ]] || \
+             [[ "$testfile" == test_prototype_pattern.cpp ]] || \
+             [[ "$testfile" == test_singleton_pattern.cpp ]]; then
+            src="tests/creational/${testfile}"
+          elif [[ "$testfile" == test_adapter_pattern.cpp ]] || \
+               [[ "$testfile" == test_bridge_pattern.cpp ]] || \
+               [[ "$testfile" == test_composite_pattern.cpp ]] || \
+               [[ "$testfile" == test_decorator_pattern.cpp ]] || \
+               [[ "$testfile" == test_facade_pattern.cpp ]] || \
+               [[ "$testfile" == test_proxy_pattern_corrected.cpp ]] || \
+               [[ "$testfile" == test_flyweight_pattern_final.cpp ]]; then
+            src="tests/structural/${testfile}"
+          elif [[ "$testfile" == test_chain_of_responsibility_final.cpp ]] || \
+               [[ "$testfile" == test_command_pattern_final.cpp ]] || \
+               [[ "$testfile" == test_interpreter_pattern.cpp ]] || \
+               [[ "$testfile" == test_iterator_pattern.cpp ]] || \
+               [[ "$testfile" == test_mediator_pattern.cpp ]] || \
+               [[ "$testfile" == test_memento_pattern.cpp ]] || \
+               [[ "$testfile" == test_observer_pattern.cpp ]] || \
+               [[ "$testfile" == test_state_pattern.cpp ]] || \
+               [[ "$testfile" == test_strategy_pattern.cpp ]] || \
+               [[ "$testfile" == test_template_method_pattern.cpp ]] || \
+               [[ "$testfile" == test_visitor_pattern.cpp ]]; then
+            src="tests/behavioral/${testfile}"
+          else
+            src="tests/utilities/${testfile}"
+          fi
+
           if [[ ! -f "${src}" ]]; then
             echo "❌ Expected test file missing: ${src}"
             exit 1
           fi
 
           mkdir -p build/tests
-          bin="build/tests/${src%.cpp}"
+          bin="build/tests/${testfile%.cpp}"
 
           echo "🔨 Compiling ${src} -> ${bin}"
-          g++ -std=c++14 -pthread -Wall -Wextra -pedantic "${src}" -o "${bin}"
+          g++ -std=c++14 -pthread -Wall -Wextra -pedantic -I./include "${src}" -o "${bin}"
 
           echo "🚀 Running ${bin}"
           "./${bin}"
 
-          echo "✅ Test passed: ${src}"
+          echo "✅ Test passed: ${testfile}"
 
   all-tests-passed:
     runs-on: ubuntu-latest
