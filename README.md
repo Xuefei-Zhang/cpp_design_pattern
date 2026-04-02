@@ -17,6 +17,7 @@ cpp_design_pattern/
 │   ├── behavioral/            # 行为型模式测试
 │   └── utilities/             # 实用工具测试
 ├── examples/                   # 示例程序
+│   └── practical_applications/ # 实战场景示例（把模式用在业务流程里）
 ├── docs/                       # 文档
 │   └── design-patterns/
 │       └── zh-cn/             # 中文文档
@@ -123,6 +124,16 @@ auto& instance = SingletonClass::getInstance();
 auto subject = std::make_shared<ConcreteSubject>();
 auto observer = std::make_shared<ConcreteObserver>();
 subject->attach(observer);
+```
+
+### 实战示例
+
+订单结算流水线示例（策略 + 工厂 + 观察者 + 命令）：
+
+```bash
+mkdir -p build/practical
+g++ -std=c++14 -pthread -I./include examples/practical_applications/order_checkout/order_checkout.cpp -o build/practical/order_checkout
+./build/practical/order_checkout
 ```
 
 ## 🧪 运行测试
