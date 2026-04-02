@@ -1,8 +1,15 @@
-name: pattern-tests
+name: C++ Design Patterns Tests
 
 on:
   push:
+    branches:
+      - main
+      - master
   pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
   build-and-run-pattern-tests:
@@ -11,14 +18,14 @@ jobs:
       fail-fast: false
       matrix:
         test:
+          # Creational Patterns
           - test_abstract_factory.cpp
           - test_factory_method.cpp
           - test_builder_pattern.cpp
           - test_prototype_pattern.cpp
           - test_singleton_pattern.cpp
-          - test_friend_classes.cpp
-          - test_scene_builder.cpp
 
+          # Structural Patterns
           - test_adapter_pattern.cpp
           - test_bridge_pattern.cpp
           - test_composite_pattern.cpp
@@ -26,13 +33,23 @@ jobs:
           - test_facade_pattern.cpp
           - test_proxy_pattern_corrected.cpp
 
+          # Behavioral Patterns
           - test_chain_of_responsibility_final.cpp
           - test_command_pattern_final.cpp
           - test_flyweight_pattern_final.cpp
+          - test_interpreter_pattern.cpp
+          - test_iterator_pattern.cpp
+          - test_mediator_pattern.cpp
+          - test_memento_pattern.cpp
           - test_observer_pattern.cpp
-          - test_strategy_pattern.cpp
           - test_state_pattern.cpp
+          - test_strategy_pattern.cpp
+          - test_template_method_pattern.cpp
+          - test_visitor_pattern.cpp
 
+          # Utility Patterns
+          - test_friend_classes.cpp
+          - test_scene_builder.cpp
           - test_thread_pool.cpp
           - test_enhanced_thread_pool.cpp
           - test_memory_pool.cpp
@@ -41,7 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Show compiler
+      - name: Show compiler version
         run: g++ --version
 
       - name: Build and run ${{ matrix.test }}
@@ -49,17 +66,64 @@ jobs:
         run: |
           set -euo pipefail
 
-          src="${{ matrix.test }}"
+          testfile="${{ matrix.test }}"
+
+          # Determine category and find the test file
+          if [[ "$testfile" == test_abstract_factory.cpp ]] || \
+             [[ "$testfile" == test_factory_method.cpp ]] || \
+             [[ "$testfile" == test_builder_pattern.cpp ]] || \
+             [[ "$testfile" == test_prototype_pattern.cpp ]] || \
+             [[ "$testfile" == test_singleton_pattern.cpp ]]; then
+            src="tests/creational/${testfile}"
+          elif [[ "$testfile" == test_adapter_pattern.cpp ]] || \
+               [[ "$testfile" == test_bridge_pattern.cpp ]] || \
+               [[ "$testfile" == test_composite_pattern.cpp ]] || \
+               [[ "$testfile" == test_decorator_pattern.cpp ]] || \
+               [[ "$testfile" == test_facade_pattern.cpp ]] || \
+               [[ "$testfile" == test_proxy_pattern_corrected.cpp ]] || \
+               [[ "$testfile" == test_flyweight_pattern_final.cpp ]]; then
+            src="tests/structural/${testfile}"
+          elif [[ "$testfile" == test_chain_of_responsibility_final.cpp ]] || \
+               [[ "$testfile" == test_command_pattern_final.cpp ]] || \
+               [[ "$testfile" == test_interpreter_pattern.cpp ]] || \
+               [[ "$testfile" == test_iterator_pattern.cpp ]] || \
+               [[ "$testfile" == test_mediator_pattern.cpp ]] || \
+               [[ "$testfile" == test_memento_pattern.cpp ]] || \
+               [[ "$testfile" == test_observer_pattern.cpp ]] || \
+               [[ "$testfile" == test_state_pattern.cpp ]] || \
+               [[ "$testfile" == test_strategy_pattern.cpp ]] || \
+               [[ "$testfile" == test_template_method_pattern.cpp ]] || \
+               [[ "$testfile" == test_visitor_pattern.cpp ]]; then
+            src="tests/behavioral/${testfile}"
+          else
+            src="tests/utilities/${testfile}"
+          fi
+
           if [[ ! -f "${src}" ]]; then
-            echo "Expected canonical test file missing: ${src}"
+            echo "❌ Expected test file missing: ${src}"
             exit 1
           fi
 
           mkdir -p build/tests
-          bin="build/tests/${src%.cpp}"
+          bin="build/tests/${testfile%.cpp}"
 
-          echo "Compiling ${src} -> ${bin}"
-          g++ -std=c++14 -pthread -Wall -Wextra -pedantic "${src}" -o "${bin}"
+          echo "🔨 Compiling ${src} -> ${bin}"
+          g++ -std=c++14 -pthread -Wall -Wextra -pedantic -I./include "${src}" -o "${bin}"
 
-          echo "Running ${bin}"
+          echo "🚀 Running ${bin}"
           "./${bin}"
+
+          echo "✅ Test passed: ${testfile}"
+
+  all-tests-passed:
+    runs-on: ubuntu-latest
+    needs: build-and-run-pattern-tests
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.build-and-run-pattern-tests.result }}" != "success" ]; then
+            echo "❌ Some tests failed!"
+            exit 1
+          fi
+          echo "✅ All tests passed successfully!"

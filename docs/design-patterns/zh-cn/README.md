@@ -35,9 +35,15 @@
 | :--- | :--- | :--- |
 | [**责任链模式 (Chain of Responsibility)**](./chain-of-responsibility.md) | `chain_of_responsibility_shapes_fixed.h` | `test_chain_of_responsibility_final.cpp` |
 | [**命令模式 (Command)**](./command.md) | `command_patterns.h` | `test_command_pattern_final.cpp` |
+| [**解释器模式 (Interpreter)**](./interpreter.md) | `interpreter_patterns.h` | `test_interpreter_pattern.cpp` |
+| [**迭代器模式 (Iterator)**](./iterator.md) | `iterator_patterns.h` | `test_iterator_pattern.cpp` |
+| [**中介者模式 (Mediator)**](./mediator.md) | `mediator_patterns.h` | `test_mediator_pattern.cpp` |
+| [**备忘录模式 (Memento)**](./memento.md) | `memento_patterns.h` | `test_memento_pattern.cpp` |
 | [**观察者模式 (Observer)**](./observer.md) | `observer_patterns.h` | `test_observer_pattern.cpp` |
-| [**策略模式 (Strategy)**](./strategy.md) | `strategy_patterns.h` | `test_strategy_pattern.cpp` |
 | [**状态模式 (State)**](./state.md) | `state_patterns.h` | `test_state_pattern.cpp` |
+| [**策略模式 (Strategy)**](./strategy.md) | `strategy_patterns.h` | `test_strategy_pattern.cpp` |
+| [**模板方法模式 (Template Method)**](./template-method.md) | `template_method_patterns.h` | `test_template_method_pattern.cpp` |
+| [**访问者模式 (Visitor)**](./visitor.md) | `visitor_patterns.h` | `test_visitor_pattern.cpp` |
 
 ---
 
