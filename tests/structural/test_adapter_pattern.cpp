@@ -1,4 +1,4 @@
-#include "adapter_patterns.h"
+#include "structural/adapter_patterns.h"
 #include <iostream>
 #include <memory>
 #include <vector>

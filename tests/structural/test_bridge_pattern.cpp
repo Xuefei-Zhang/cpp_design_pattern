@@ -1,4 +1,4 @@
-#include "bridge_patterns.h"
+#include "structural/bridge_patterns.h"
 #include <iostream>
 #include <memory>
 #include <vector>

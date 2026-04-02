@@ -1,4 +1,4 @@
-#include "command_patterns.h"
+#include "behavioral/command_patterns.h"
 #include <iostream>
 #include <memory>
 #include <vector>

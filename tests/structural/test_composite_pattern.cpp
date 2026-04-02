@@ -1,4 +1,4 @@
-#include "composite_patterns.h"
+#include "structural/composite_patterns.h"
 #include <iostream>
 #include <vector>
 #include <memory>

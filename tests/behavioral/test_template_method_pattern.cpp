@@ -1,4 +1,4 @@
-#include "template_method_patterns.h"
+#include "behavioral/template_method_patterns.h"
 
 #include <cassert>
 #include <iostream>

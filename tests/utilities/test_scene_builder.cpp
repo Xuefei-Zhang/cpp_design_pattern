@@ -1,4 +1,4 @@
-#include "scene_builder.h"
+#include "utilities/scene_builder.h"
 #include <iostream>
 #include <memory>
 

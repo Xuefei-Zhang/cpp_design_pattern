@@ -1,4 +1,4 @@
-#include "flyweight_shapes.h"
+#include "structural/flyweight_shapes.h"
 #include <iostream>
 #include <memory>
 #include <vector>

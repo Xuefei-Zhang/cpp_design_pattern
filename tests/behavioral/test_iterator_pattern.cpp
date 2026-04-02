@@ -1,4 +1,4 @@
-#include "iterator_patterns.h"
+#include "behavioral/iterator_patterns.h"
 
 #include <cassert>
 #include <iostream>

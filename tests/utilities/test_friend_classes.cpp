@@ -1,5 +1,5 @@
-#include "friend_classes_basic.h"
-#include "friend_classes_advanced.h"
+#include "utilities/friend_classes_basic.h"
+#include "utilities/friend_classes_advanced.h"
 #include <iostream>
 
 int main() {

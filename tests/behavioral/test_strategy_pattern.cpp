@@ -1,4 +1,4 @@
-#include "strategy_patterns.h"
+#include "behavioral/strategy_patterns.h"
 
 #include <cmath>
 #include <iostream>

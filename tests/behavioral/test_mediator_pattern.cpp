@@ -1,4 +1,4 @@
-#include "mediator_patterns.h"
+#include "behavioral/mediator_patterns.h"
 
 #include <cassert>
 #include <iostream>

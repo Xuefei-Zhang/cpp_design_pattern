@@ -1,4 +1,4 @@
-#include "chain_of_responsibility_shapes_fixed.h"
+#include "behavioral/chain_of_responsibility_shapes_fixed.h"
 #include <iostream>
 #include <memory>
 #include <vector>

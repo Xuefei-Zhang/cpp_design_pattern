@@ -1,4 +1,4 @@
-#include "interpreter_patterns.h"
+#include "behavioral/interpreter_patterns.h"
 
 #include <cassert>
 #include <iostream>

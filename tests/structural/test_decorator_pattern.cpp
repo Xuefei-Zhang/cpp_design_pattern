@@ -1,4 +1,4 @@
-#include "decorator_patterns.h"
+#include "structural/decorator_patterns.h"
 #include <iostream>
 #include <memory>
 #include <vector>

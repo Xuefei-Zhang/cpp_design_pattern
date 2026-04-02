@@ -1,4 +1,4 @@
-#include "state_patterns.h"
+#include "behavioral/state_patterns.h"
 
 #include <cassert>
 #include <iostream>

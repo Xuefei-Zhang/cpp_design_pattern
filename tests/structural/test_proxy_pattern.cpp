@@ -1,4 +1,4 @@
-#include "proxy_shapes.h"
+#include "structural/proxy_shapes.h"
 #include <iostream>
 #include <memory>
 #include <vector>

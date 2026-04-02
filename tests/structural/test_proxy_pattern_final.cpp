@@ -1,4 +1,4 @@
-#include "proxy_patterns.h"
+#include "structural/proxy_patterns.h"
 #include <iostream>
 #include <memory>
 #include <chrono>
