@@ -1,4 +1,14 @@
+# Build outputs
 build/
+**/build/
+
+# Compiled artifacts
 *.o
 *.out
+*.exe
+
+# Logs and temporary files
 *.log
+*.tmp
+*.swp
+.DS_Store

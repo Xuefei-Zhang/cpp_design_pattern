@@ -7,8 +7,8 @@
 #include <utility>
 #include <vector>
 
-#include "behavioral/observer_patterns.h"
-#include "behavioral/strategy_patterns.h"
+#include "../../../behavioral/observer/include/observer_patterns.h"
+#include "../../../behavioral/strategy/include/strategy_patterns.h"
 
 struct OrderItem {
     std::string name;
