@@ -59,4 +59,4 @@ g++ -std=c++14 -I../../../include -pthread test_thread_safety.cpp -o test_thread
 ## 参考资料
 
 - GoF《设计模式》
-- 项目主README: ../../../README.md
+- 项目主README: ../../../docs/README.md
